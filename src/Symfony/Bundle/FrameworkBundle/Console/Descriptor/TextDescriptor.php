@@ -355,7 +355,8 @@ class TextDescriptor extends Descriptor
             $tableRows[] = ['Arguments', implode("\n", $argumentsInformation)];
         }
 
-        $tableRows[] = ['Used by', implode(', ', $this->getUsagesForDefinition($definition))];
+        $usages = $this->getUsagesForDefinition($definition);
+        $tableRows[] = ['Used by', count($usages) > 0 ? implode(', ', $usages) : 'no'];
 
         $options['output']->table($tableHeaders, $tableRows);
     }

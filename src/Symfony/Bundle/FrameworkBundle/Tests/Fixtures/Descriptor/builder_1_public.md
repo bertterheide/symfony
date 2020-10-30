@@ -28,7 +28,7 @@ Definitions
 - Abstract: no
 - Autowired: no
 - Autoconfigured: no
-- Used by:
+- Used by: no
 
 ### service_container
 
@@ -41,7 +41,8 @@ Definitions
 - Abstract: no
 - Autowired: no
 - Autoconfigured: no
-- Used by: 
+- Used by: no
+
 
 Aliases
 -------

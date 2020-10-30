@@ -250,7 +250,8 @@ class MarkdownDescriptor extends Descriptor
             }
         }
 
-        $output .= "\n".'- Used by: '.implode(', ', $this->getUsagesForDefinition($definition));
+        $usages = $this->getUsagesForDefinition($definition);
+        $output .= "\n".'- Used by: '.(count($usages) > 0 ? implode(', ', $usages) : 'no');
 
         $this->write(isset($options['id']) ? sprintf("### %s\n\n%s\n", $options['id'], $output) : $output);
     }
