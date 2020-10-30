@@ -24,7 +24,6 @@ use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Routing\Route;
 use Symfony\Component\Routing\RouteCollection;
-use function array_key_exists;
 
 /**
  * @author Jean-François Simon <jeanfrancois.simon@sensiolabs.com>
@@ -376,12 +375,12 @@ abstract class Descriptor implements DescriptorInterface
     {
         $class = $definition->getClass();
 
-        return $class !== null ? $this->getUsages($class) : [];
+        return null !== $class ? $this->getUsages($class) : [];
     }
 
     protected function getUsages(string $class)
     {
-        return array_key_exists($class, $this->usages) ? $this->usages[$class] : [];
+        return \array_key_exists($class, $this->usages) ? $this->usages[$class] : [];
     }
 
     protected function buildUsageMapForContainer(ContainerBuilder $builder)

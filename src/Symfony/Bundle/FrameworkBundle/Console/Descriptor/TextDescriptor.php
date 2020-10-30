@@ -22,15 +22,12 @@ use Symfony\Component\DependencyInjection\Argument\ServiceLocatorArgument;
 use Symfony\Component\DependencyInjection\Argument\TaggedIteratorArgument;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
-use Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBag;
 use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpKernel\Debug\FileLinkFormatter;
 use Symfony\Component\Routing\Route;
 use Symfony\Component\Routing\RouteCollection;
-use function array_key_exists;
-use function implode;
 
 /**
  * @author Jean-François Simon <jeanfrancois.simon@sensiolabs.com>
