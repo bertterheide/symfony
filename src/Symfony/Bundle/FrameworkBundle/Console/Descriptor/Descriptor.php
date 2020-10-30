@@ -18,10 +18,13 @@ use Symfony\Component\DependencyInjection\Alias;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\DependencyInjection\Definition;
+use Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBag;
+use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Routing\Route;
 use Symfony\Component\Routing\RouteCollection;
+use function array_key_exists;
 
 /**
  * @author Jean-François Simon <jeanfrancois.simon@sensiolabs.com>
@@ -36,11 +39,20 @@ abstract class Descriptor implements DescriptorInterface
     protected $output;
 
     /**
+     * @var string[]
+     */
+    private $usages = [];
+
+    /**
      * {@inheritdoc}
      */
     public function describe(OutputInterface $output, $object, array $options = [])
     {
         $this->output = $output;
+
+        if ($object instanceof ContainerBuilder) {
+            $this->buildUsageMapForContainer($object);
+        }
 
         switch (true) {
             case $object instanceof RouteCollection:
@@ -358,5 +370,52 @@ abstract class Descriptor implements DescriptorInterface
         ksort($envs);
 
         return array_values($envs);
+    }
+
+    protected function getUsagesForDefinition(Definition $definition)
+    {
+        $class = $definition->getClass();
+
+        return $class !== null ? $this->getUsages($class) : [];
+    }
+
+    protected function getUsages(string $class)
+    {
+        return array_key_exists($class, $this->usages) ? $this->usages[$class] : [];
+    }
+
+    protected function buildUsageMapForContainer(ContainerBuilder $builder)
+    {
+        foreach ($builder->getDefinitions() as $id => $definition) {
+            $this->buildUsageMapForDefinition($builder, $id, $definition);
+        }
+    }
+
+    protected function buildUsageMapForDefinition(ContainerBuilder $builder, string $id, Definition $definition)
+    {
+        foreach ($definition->getArguments() as $argument) {
+            $this->buildUsageMapForArgument($builder, $id, $argument);
+        }
+
+        foreach ($definition->getMethodCalls() as $methodCall) {
+            foreach ($methodCall[1] as $argument) {
+                $this->buildUsageMapForArgument($builder, $id, $argument);
+            }
+        }
+    }
+
+    protected function buildUsageMapForArgument(ContainerBuilder $builder, string $id, $argument)
+    {
+        if (!$argument instanceof Reference) {
+            return;
+        }
+
+        try {
+            $argumentDefinition = $builder->getDefinition((string) $argument);
+        } catch (ServiceNotFoundException $serviceNotFoundException) {
+            return;
+        }
+
+        $this->usages[$argumentDefinition->getClass()][] = $id;
     }
 }

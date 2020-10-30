@@ -36,6 +36,10 @@
                 "name": "tag2",
                 "parameters": []
             }
+        ],
+        "used_by": [
+            "definition_1",
+            "service_1"
         ]
     }
 ]

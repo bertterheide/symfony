@@ -21,6 +21,7 @@ use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Routing\Route;
 use Symfony\Component\Routing\RouteCollection;
+use function implode;
 
 /**
  * @author Jean-François Simon <jeanfrancois.simon@sensiolabs.com>
@@ -249,6 +250,8 @@ class MarkdownDescriptor extends Descriptor
                 }
             }
         }
+
+        $output .= "\n".'- Used by: ' . implode(', ', $this->getUsagesForDefinition($definition));
 
         $this->write(isset($options['id']) ? sprintf("### %s\n\n%s\n", $options['id'], $output) : $output);
     }

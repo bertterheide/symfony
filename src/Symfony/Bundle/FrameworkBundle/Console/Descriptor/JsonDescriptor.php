@@ -23,6 +23,7 @@ use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Routing\Route;
 use Symfony\Component\Routing\RouteCollection;
+use function implode;
 
 /**
  * @author Jean-François Simon <jeanfrancois.simon@sensiolabs.com>
@@ -262,6 +263,8 @@ class JsonDescriptor extends Descriptor
                 }
             }
         }
+
+        $data['used_by'] = $this->getUsagesForDefinition($definition);
 
         return $data;
     }

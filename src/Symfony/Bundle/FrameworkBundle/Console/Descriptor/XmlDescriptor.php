@@ -377,6 +377,15 @@ class XmlDescriptor extends Descriptor
             }
         }
 
+        $usages = $this->getUsagesForDefinition($definition);
+        if (\count($usages) > 0) {
+            $serviceXML->appendChild($usagesXML = $dom->createElement('usages'));
+            foreach ($usages as $usage) {
+                $usagesXML->appendChild($usageXML = $dom->createElement('usage'));
+                $usageXML->appendChild(new \DOMText($usage));
+            }
+        }
+
         return $dom;
     }
 
