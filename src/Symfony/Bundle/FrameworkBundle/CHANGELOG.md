@@ -1,6 +1,10 @@
 CHANGELOG
 =========
 
+Unreleased
+-----
+ * Added "Used by" to container:debug output
+
 5.2.0
 -----
 
