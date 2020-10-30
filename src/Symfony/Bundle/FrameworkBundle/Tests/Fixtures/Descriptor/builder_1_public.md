@@ -16,7 +16,7 @@ Definitions
 - Autoconfigured: no
 - Factory Class: `Full\Qualified\FactoryClass`
 - Factory Method: `get`
-- Used by:
+- Used by: no
 
 ### definition_without_class
 

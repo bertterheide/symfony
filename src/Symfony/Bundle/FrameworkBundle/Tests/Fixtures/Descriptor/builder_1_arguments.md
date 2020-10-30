@@ -44,7 +44,7 @@ Definitions
 - Autowired: no
 - Autoconfigured: no
 - Arguments: no
-- Used by:
+- Used by: no
 
 
 Aliases

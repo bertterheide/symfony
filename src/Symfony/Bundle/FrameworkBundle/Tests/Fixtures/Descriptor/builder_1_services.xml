@@ -15,9 +15,9 @@
         <parameter name="attr3">val3</parameter>
       </tag>
       <tag name="tag2"/>
-      <usages>
-        <usage>definition_1</usage>
-      </usages>
     </tags>
+    <usages>
+      <usage>definition_1</usage>
+    </usages>
   </definition>
 </container>
