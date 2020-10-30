@@ -356,7 +356,7 @@ class TextDescriptor extends Descriptor
         }
 
         $usages = $this->getUsagesForDefinition($definition);
-        $tableRows[] = ['Used by', count($usages) > 0 ? implode(', ', $usages) : 'no'];
+        $tableRows[] = ['Used by', \count($usages) > 0 ? implode(', ', $usages) : 'no'];
 
         $options['output']->table($tableHeaders, $tableRows);
     }
