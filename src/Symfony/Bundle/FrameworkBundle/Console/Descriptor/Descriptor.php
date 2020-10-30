@@ -38,7 +38,7 @@ abstract class Descriptor implements DescriptorInterface
     protected $output;
 
     /**
-     * @var string[]
+     * @var array
      */
     private $usages = [];
 
@@ -371,26 +371,26 @@ abstract class Descriptor implements DescriptorInterface
         return array_values($envs);
     }
 
-    protected function getUsagesForDefinition(Definition $definition)
+    protected function getUsagesForDefinition(Definition $definition): array
     {
         $class = $definition->getClass();
 
         return null !== $class ? $this->getUsages($class) : [];
     }
 
-    protected function getUsages(string $class)
+    private function getUsages(string $class): array
     {
-        return \array_key_exists($class, $this->usages) ? $this->usages[$class] : [];
+        return $this->usages[$class] ?? [];
     }
 
-    protected function buildUsageMapForContainer(ContainerBuilder $builder)
+    private function buildUsageMapForContainer(ContainerBuilder $builder)
     {
         foreach ($builder->getDefinitions() as $id => $definition) {
             $this->buildUsageMapForDefinition($builder, $id, $definition);
         }
     }
 
-    protected function buildUsageMapForDefinition(ContainerBuilder $builder, string $id, Definition $definition)
+    private function buildUsageMapForDefinition(ContainerBuilder $builder, string $id, Definition $definition)
     {
         foreach ($definition->getArguments() as $argument) {
             $this->buildUsageMapForArgument($builder, $id, $argument);
@@ -403,7 +403,7 @@ abstract class Descriptor implements DescriptorInterface
         }
     }
 
-    protected function buildUsageMapForArgument(ContainerBuilder $builder, string $id, $argument)
+    private function buildUsageMapForArgument(ContainerBuilder $builder, string $id, $argument)
     {
         if (!$argument instanceof Reference) {
             return;
