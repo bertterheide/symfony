@@ -14,6 +14,9 @@
             "factory_method": "get",
             "calls": [
                 "setMailer"
+            ],
+            "used_by": [
+                "definition_1"
             ]
         }
     ],
@@ -32,6 +35,9 @@
             "factory_method": "get",
             "calls": [
                 "setMailer"
+            ],
+            "used_by": [
+                "definition_1"
             ]
         }
     ]
