@@ -16,9 +16,11 @@ use Symfony\Component\Console\Descriptor\DescriptorInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\DependencyInjection\Alias;
 use Symfony\Component\DependencyInjection\Compiler\AnalyzeServiceReferencesPass;
+use Symfony\Component\DependencyInjection\Compiler\ServiceReferenceGraphEdge;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\DependencyInjection\Definition;
+use Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBag;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Routing\Route;
@@ -35,11 +37,6 @@ abstract class Descriptor implements DescriptorInterface
      * @var OutputInterface
      */
     protected $output;
-
-    /**
-     * @var array
-     */
-    private $usages = [];
 
     /**
      * {@inheritdoc}
@@ -368,5 +365,16 @@ abstract class Descriptor implements DescriptorInterface
         ksort($envs);
 
         return array_values($envs);
+    }
+
+    protected function getServiceEdges(ContainerBuilder $builder, string $serviceId): array
+    {
+        try {
+            return array_map(function (ServiceReferenceGraphEdge $edge) {
+                return $edge->getSourceNode()->getId();
+            }, $builder->getCompiler()->getServiceReferenceGraph()->getNode($serviceId)->getInEdges());
+        } catch (InvalidArgumentException $exception) {
+            return [];
+        }
     }
 }

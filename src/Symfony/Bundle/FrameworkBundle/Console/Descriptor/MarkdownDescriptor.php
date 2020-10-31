@@ -84,7 +84,7 @@ class MarkdownDescriptor extends Descriptor
             $this->write("\n\n".$tag."\n".str_repeat('-', \strlen($tag)));
             foreach ($definitions as $serviceId => $definition) {
                 $this->write("\n\n");
-                $this->describeContainerDefinition($definition, ['omit_tags' => true, 'id' => $serviceId]);
+                $this->describeContainerDefinition($definition, ['omit_tags' => true, 'id' => $serviceId], $builder);
             }
         }
     }
@@ -100,7 +100,7 @@ class MarkdownDescriptor extends Descriptor
         if ($service instanceof Alias) {
             $this->describeContainerAlias($service, $childOptions, $builder);
         } elseif ($service instanceof Definition) {
-            $this->describeContainerDefinition($service, $childOptions);
+            $this->describeContainerDefinition($service, $childOptions, $builder);
         } else {
             $this->write(sprintf('**`%s`:** `%s`', $options['id'], \get_class($service)));
         }
@@ -173,7 +173,7 @@ class MarkdownDescriptor extends Descriptor
             $this->write("\n\nDefinitions\n-----------\n");
             foreach ($services['definitions'] as $id => $service) {
                 $this->write("\n");
-                $this->describeContainerDefinition($service, ['id' => $id, 'show_arguments' => $showArguments]);
+                $this->describeContainerDefinition($service, ['id' => $id, 'show_arguments' => $showArguments], $builder);
             }
         }
 
@@ -251,22 +251,10 @@ class MarkdownDescriptor extends Descriptor
             }
         }
 
-        if (null !== $builder && isset($options['id'])) {
-            $inEdges = $this->formatInEdges($builder->getCompiler()->getServiceReferenceGraph()->getNode($options['id'])->getInEdges());
-            $output .= "\n".'- Usage: '.($inEdges ? implode(', ', $inEdges) : 'none');
-        }
+        $inEdges = null !== $builder && isset($options['id']) ? $this->getServiceEdges($builder, $options['id']) : [];
+        $output .= "\n".'- Usages: '.($inEdges ? implode(', ', $inEdges) : 'none');
 
         $this->write(isset($options['id']) ? sprintf("### %s\n\n%s\n", $options['id'], $output) : $output);
-    }
-
-    /**
-     * @param ServiceReferenceGraphEdge[] $inEdges
-     */
-    protected function formatInEdges(array $inEdges): array
-    {
-        return array_map(function (ServiceReferenceGraphEdge $edge) {
-            return $edge->getSourceNode()->getId();
-        }, $inEdges);
     }
 
     protected function describeContainerAlias(Alias $alias, array $options = [], ContainerBuilder $builder = null)
@@ -287,7 +275,7 @@ class MarkdownDescriptor extends Descriptor
         }
 
         $this->write("\n");
-        $this->describeContainerDefinition($builder->getDefinition((string) $alias), array_merge($options, ['id' => (string) $alias]));
+        $this->describeContainerDefinition($builder->getDefinition((string) $alias), array_merge($options, ['id' => (string) $alias]), $builder);
     }
 
     protected function describeContainerParameter($parameter, array $options = [])

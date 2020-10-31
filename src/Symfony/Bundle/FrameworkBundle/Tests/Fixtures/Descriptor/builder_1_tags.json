@@ -15,9 +15,7 @@
             "calls": [
                 "setMailer"
             ],
-            "usages": [
-                "definition_1"
-            ]
+            "usages": []
         }
     ],
     "tag2": [
@@ -36,9 +34,7 @@
             "calls": [
                 "setMailer"
             ],
-            "usages": [
-                "definition_1"
-            ]
+            "usages": []
         }
     ]
 }

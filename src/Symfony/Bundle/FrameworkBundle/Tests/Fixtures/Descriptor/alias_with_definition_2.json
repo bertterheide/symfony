@@ -38,8 +38,7 @@
             }
         ],
         "usages": [
-            "definition_1",
-            "service_1"
+          ".alias_2"
         ]
     }
 ]

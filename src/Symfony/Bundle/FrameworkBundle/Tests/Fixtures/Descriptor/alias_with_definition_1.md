@@ -15,4 +15,4 @@
 - Autoconfigured: no
 - Factory Class: `Full\Qualified\FactoryClass`
 - Factory Method: `get`
-- Usages: none
+- Usages: alias_1

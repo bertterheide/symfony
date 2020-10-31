@@ -6,9 +6,6 @@
       <calls>
         <call method="setMailer"/>
       </calls>
-      <usages>
-        <usage>definition_1</usage>
-      </usages>
     </definition>
   </tag>
   <tag name="tag2">
@@ -17,9 +14,6 @@
       <calls>
         <call method="setMailer"/>
       </calls>
-      <usages>
-        <usage>definition_1</usage>
-      </usages>
     </definition>
   </tag>
 </container>

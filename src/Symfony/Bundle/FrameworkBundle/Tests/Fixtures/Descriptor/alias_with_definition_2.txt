@@ -22,5 +22,5 @@
   Required File     /path/to/file                    
   Factory Service   factory.service                  
   Factory Method    get                              
-  Usages            definition_1, service_1          
+  Usages            .alias_2                         
  ----------------- ---------------------------------

@@ -23,4 +23,4 @@
 - Tag: `tag1`
     - Attr3: val3
 - Tag: `tag2`
-- Usages: definition_1, service_1
+- Usages: .alias_2

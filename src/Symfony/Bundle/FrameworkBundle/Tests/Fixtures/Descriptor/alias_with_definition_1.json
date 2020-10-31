@@ -16,6 +16,8 @@
         "factory_class": "Full\\Qualified\\FactoryClass",
         "factory_method": "get",
         "tags": [],
-        "usages": []
+        "usages": [
+          "alias_1"
+        ]
     }
 ]

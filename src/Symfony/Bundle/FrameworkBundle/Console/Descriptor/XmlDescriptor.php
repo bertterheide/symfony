@@ -246,7 +246,7 @@ class XmlDescriptor extends Descriptor
             $tagXML->setAttribute('name', $tag);
 
             foreach ($definitions as $serviceId => $definition) {
-                $definitionXML = $this->getContainerDefinitionDocument($definition, $serviceId, true);
+                $definitionXML = $this->getContainerDefinitionDocument($definition, $serviceId, true, false, $builder);
                 $tagXML->appendChild($dom->importNode($definitionXML->childNodes->item(0), true));
             }
         }
@@ -264,7 +264,7 @@ class XmlDescriptor extends Descriptor
                 $dom->appendChild($dom->importNode($this->getContainerDefinitionDocument($builder->getDefinition((string) $service), (string) $service, false, $showArguments, $builder)->childNodes->item(0), true));
             }
         } elseif ($service instanceof Definition) {
-            $dom->appendChild($dom->importNode($this->getContainerDefinitionDocument($service, $id, false, $showArguments)->childNodes->item(0), true));
+            $dom->appendChild($dom->importNode($this->getContainerDefinitionDocument($service, $id, false, $showArguments, $builder)->childNodes->item(0), true));
         } else {
             $dom->appendChild($serviceXML = $dom->createElement('service'));
             $serviceXML->setAttribute('id', $id);
@@ -355,7 +355,7 @@ class XmlDescriptor extends Descriptor
         }
 
         if ($showArguments) {
-            foreach ($this->getArgumentNodes($definition->getArguments(), $dom) as $node) {
+            foreach ($this->getArgumentNodes($definition->getArguments(), $dom, $builder) as $node) {
                 $serviceXML->appendChild($node);
             }
         }
@@ -378,12 +378,12 @@ class XmlDescriptor extends Descriptor
         }
 
         if (null !== $builder && null !== $id) {
-            $inEdges = $builder->getCompiler()->getServiceReferenceGraph()->getNode($id)->getInEdges();
-            if ($inEdges) {
+            $edges = $this->getServiceEdges($builder, $id);
+            if ($edges) {
                 $serviceXML->appendChild($usagesXML = $dom->createElement('usages'));
-                foreach ($inEdges as $usage) {
+                foreach ($edges as $edge) {
                     $usagesXML->appendChild($usageXML = $dom->createElement('usage'));
-                    $usageXML->appendChild(new \DOMText($usage));
+                    $usageXML->appendChild(new \DOMText($edge));
                 }
             }
         }
@@ -394,7 +394,7 @@ class XmlDescriptor extends Descriptor
     /**
      * @return \DOMNode[]
      */
-    private function getArgumentNodes(array $arguments, \DOMDocument $dom): array
+    private function getArgumentNodes(array $arguments, \DOMDocument $dom, ContainerBuilder $builder = null): array
     {
         $nodes = [];
 
@@ -415,15 +415,15 @@ class XmlDescriptor extends Descriptor
             } elseif ($argument instanceof IteratorArgument || $argument instanceof ServiceLocatorArgument) {
                 $argumentXML->setAttribute('type', $argument instanceof IteratorArgument ? 'iterator' : 'service_locator');
 
-                foreach ($this->getArgumentNodes($argument->getValues(), $dom) as $childArgumentXML) {
+                foreach ($this->getArgumentNodes($argument->getValues(), $dom, $builder) as $childArgumentXML) {
                     $argumentXML->appendChild($childArgumentXML);
                 }
             } elseif ($argument instanceof Definition) {
-                $argumentXML->appendChild($dom->importNode($this->getContainerDefinitionDocument($argument, null, false, true)->childNodes->item(0), true));
+                $argumentXML->appendChild($dom->importNode($this->getContainerDefinitionDocument($argument, null, false, true, $builder)->childNodes->item(0), true));
             } elseif (\is_array($argument)) {
                 $argumentXML->setAttribute('type', 'collection');
 
-                foreach ($this->getArgumentNodes($argument, $dom) as $childArgumentXML) {
+                foreach ($this->getArgumentNodes($argument, $dom, $builder) as $childArgumentXML) {
                     $argumentXML->appendChild($childArgumentXML);
                 }
             } else {

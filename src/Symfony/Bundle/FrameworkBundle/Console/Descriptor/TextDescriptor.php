@@ -20,7 +20,6 @@ use Symfony\Component\DependencyInjection\Argument\IteratorArgument;
 use Symfony\Component\DependencyInjection\Argument\ServiceClosureArgument;
 use Symfony\Component\DependencyInjection\Argument\ServiceLocatorArgument;
 use Symfony\Component\DependencyInjection\Argument\TaggedIteratorArgument;
-use Symfony\Component\DependencyInjection\Compiler\ServiceReferenceGraphEdge;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBag;
@@ -356,22 +355,10 @@ class TextDescriptor extends Descriptor
             $tableRows[] = ['Arguments', implode("\n", $argumentsInformation)];
         }
 
-        if (null !== $builder && isset($options['id'])) {
-            $inEdges = $this->formatInEdges($builder->getCompiler()->getServiceReferenceGraph()->getNode($options['id'])->getInEdges());
-            $tableRows[] = ['Usages', $inEdges ? implode(', ', $inEdges) : 'none'];
-        }
+        $inEdges = null !== $builder && isset($options['id']) ? $this->getServiceEdges($builder, $options['id']) : [];
+        $tableRows[] = ['Usages', $inEdges ? implode(', ', $inEdges) : 'none'];
 
         $options['output']->table($tableHeaders, $tableRows);
-    }
-
-    /**
-     * @param ServiceReferenceGraphEdge[] $inEdges
-     */
-    protected function formatInEdges(array $inEdges): array
-    {
-        return array_map(function (ServiceReferenceGraphEdge $edge) {
-            return $edge->getSourceNode()->getId();
-        }, $inEdges);
     }
 
     protected function describeContainerDeprecations(ContainerBuilder $builder, array $options = []): void
@@ -412,7 +399,7 @@ class TextDescriptor extends Descriptor
             return;
         }
 
-        $this->describeContainerDefinition($builder->getDefinition((string) $alias), array_merge($options, ['id' => (string) $alias]));
+        $this->describeContainerDefinition($builder->getDefinition((string) $alias), array_merge($options, ['id' => (string) $alias]), $builder);
     }
 
     protected function describeContainerParameter($parameter, array $options = [])

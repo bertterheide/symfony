@@ -18,7 +18,7 @@ tag1
 - Factory Service: `factory.service`
 - Factory Method: `get`
 - Call: `setMailer`
-- Usages: definition_1
+- Usages: none
 
 
 tag2
@@ -38,4 +38,4 @@ tag2
 - Factory Service: `factory.service`
 - Factory Method: `get`
 - Call: `setMailer`
-- Usages: definition_1
+- Usages: none
