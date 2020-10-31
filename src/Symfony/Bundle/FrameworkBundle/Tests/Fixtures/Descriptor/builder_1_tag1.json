@@ -34,7 +34,7 @@
                     "parameters": []
                 }
             ],
-            "used_by": [
+            "usages": [
                 "definition_1"
             ]
         }

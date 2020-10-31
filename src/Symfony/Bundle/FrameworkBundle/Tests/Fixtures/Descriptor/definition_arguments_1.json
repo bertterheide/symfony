@@ -28,7 +28,7 @@
             ],
             "file": null,
             "tags": [],
-            "used_by": []
+            "usages": []
         },
         [
             "foo",
@@ -48,7 +48,7 @@
                 "arguments": [],
                 "file": null,
                 "tags": [],
-                "used_by": []
+                "usages": []
             }
         ],
         [
@@ -66,5 +66,5 @@
     "factory_class": "Full\\Qualified\\FactoryClass",
     "factory_method": "get",
     "tags": [],
-    "used_by": []
+    "usages": []
 }

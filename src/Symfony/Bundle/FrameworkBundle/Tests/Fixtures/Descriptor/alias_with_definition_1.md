@@ -15,4 +15,4 @@
 - Autoconfigured: no
 - Factory Class: `Full\Qualified\FactoryClass`
 - Factory Method: `get`
-- Used by: no
+- Usages: none

@@ -17,7 +17,7 @@ Definitions
 - Arguments: yes
 - Factory Class: `Full\Qualified\FactoryClass`
 - Factory Method: `get`
-- Used by: no
+- Usages: none
 
 ### definition_without_class
 
@@ -30,7 +30,7 @@ Definitions
 - Autowired: no
 - Autoconfigured: no
 - Arguments: no
-- Used by: no
+- Usages: none
 
 ### service_container
 
@@ -44,7 +44,7 @@ Definitions
 - Autowired: no
 - Autoconfigured: no
 - Arguments: no
-- Used by: no
+- Usages: none
 
 
 Aliases

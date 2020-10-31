@@ -6,4 +6,4 @@
 - Abstract: no
 - Autowired: no
 - Autoconfigured: no
-- Used by: no
+- Usages: none

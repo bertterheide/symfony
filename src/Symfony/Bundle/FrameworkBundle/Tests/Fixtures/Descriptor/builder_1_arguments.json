@@ -30,7 +30,7 @@
                     ],
                     "file": null,
                     "tags": [],
-                    "used_by": []
+                    "usages": []
                 },
                 [
                     "foo",
@@ -50,7 +50,7 @@
                         "arguments": [],
                         "file": null,
                         "tags": [],
-                        "used_by": []
+                        "usages": []
                     }
                 ],
                 [
@@ -68,7 +68,7 @@
             "factory_class": "Full\\Qualified\\FactoryClass",
             "factory_method": "get",
             "tags": [],
-            "used_by": []
+            "usages": []
         },
         "definition_without_class": {
             "class": "",
@@ -82,7 +82,7 @@
             "arguments": [],
             "file": null,
             "tags": [],
-            "used_by": []
+            "usages": []
         },
         "service_container": {
             "class": "Symfony\\Component\\DependencyInjection\\ContainerInterface",
@@ -97,7 +97,7 @@
             "arguments": [],
             "file": null,
             "tags": [],
-            "used_by": []
+            "usages": []
         }
     },
     "aliases": {

@@ -27,7 +27,7 @@
                     }
                 }
             ],
-            "used_by": []
+            "usages": []
         },
         "definition_1": {
             "class": "Full\\Qualified\\Class1",
@@ -63,7 +63,7 @@
                     "parameters": []
                 }
             ],
-            "used_by": []
+            "usages": []
         },
         "definition_2": {
             "class": "Full\\Qualified\\Class2",
@@ -85,7 +85,7 @@
                     }
                 }
             ],
-            "used_by": []
+            "usages": []
         }
     },
     "aliases": [],
