@@ -15,12 +15,11 @@ use Symfony\Component\Config\Resource\ClassExistenceResource;
 use Symfony\Component\Console\Descriptor\DescriptorInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\DependencyInjection\Alias;
+use Symfony\Component\DependencyInjection\Compiler\AnalyzeServiceReferencesPass;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\DependencyInjection\Definition;
-use Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBag;
-use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Routing\Route;
 use Symfony\Component\Routing\RouteCollection;
@@ -50,7 +49,7 @@ abstract class Descriptor implements DescriptorInterface
         $this->output = $output;
 
         if ($object instanceof ContainerBuilder) {
-            $this->buildUsageMapForContainer($object);
+            (new AnalyzeServiceReferencesPass(false, false))->process($object);
         }
 
         switch (true) {
@@ -136,7 +135,7 @@ abstract class Descriptor implements DescriptorInterface
 
     abstract protected function describeContainerDeprecations(ContainerBuilder $builder, array $options = []): void;
 
-    abstract protected function describeContainerDefinition(Definition $definition, array $options = []);
+    abstract protected function describeContainerDefinition(Definition $definition, array $options = [], ContainerBuilder $builder = null);
 
     abstract protected function describeContainerAlias(Alias $alias, array $options = [], ContainerBuilder $builder = null);
 
@@ -369,52 +368,5 @@ abstract class Descriptor implements DescriptorInterface
         ksort($envs);
 
         return array_values($envs);
-    }
-
-    protected function getUsagesForDefinition(Definition $definition): array
-    {
-        $class = $definition->getClass();
-
-        return null !== $class ? $this->getUsages($class) : [];
-    }
-
-    private function getUsages(string $class): array
-    {
-        return $this->usages[$class] ?? [];
-    }
-
-    private function buildUsageMapForContainer(ContainerBuilder $builder)
-    {
-        foreach ($builder->getDefinitions() as $id => $definition) {
-            $this->buildUsageMapForDefinition($builder, $id, $definition);
-        }
-    }
-
-    private function buildUsageMapForDefinition(ContainerBuilder $builder, string $id, Definition $definition)
-    {
-        foreach ($definition->getArguments() as $argument) {
-            $this->buildUsageMapForArgument($builder, $id, $argument);
-        }
-
-        foreach ($definition->getMethodCalls() as $methodCall) {
-            foreach ($methodCall[1] as $argument) {
-                $this->buildUsageMapForArgument($builder, $id, $argument);
-            }
-        }
-    }
-
-    private function buildUsageMapForArgument(ContainerBuilder $builder, string $id, $argument)
-    {
-        if (!$argument instanceof Reference) {
-            return;
-        }
-
-        try {
-            $argumentDefinition = $builder->getDefinition((string) $argument);
-        } catch (ServiceNotFoundException $serviceNotFoundException) {
-            return;
-        }
-
-        $this->usages[$argumentDefinition->getClass()][] = $id;
     }
 }

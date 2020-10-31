@@ -14,6 +14,7 @@ namespace Symfony\Bundle\FrameworkBundle\Console\Descriptor;
 use Symfony\Component\Console\Exception\LogicException;
 use Symfony\Component\Console\Exception\RuntimeException;
 use Symfony\Component\DependencyInjection\Alias;
+use Symfony\Component\DependencyInjection\Compiler\ServiceReferenceGraphEdge;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBag;
@@ -193,7 +194,7 @@ class MarkdownDescriptor extends Descriptor
         }
     }
 
-    protected function describeContainerDefinition(Definition $definition, array $options = [])
+    protected function describeContainerDefinition(Definition $definition, array $options = [], ContainerBuilder $builder = null)
     {
         $output = '';
 
@@ -250,10 +251,22 @@ class MarkdownDescriptor extends Descriptor
             }
         }
 
-        $usages = $this->getUsagesForDefinition($definition);
-        $output .= "\n".'- Used by: '.(\count($usages) > 0 ? implode(', ', $usages) : 'no');
+        if (null !== $builder && isset($options['id'])) {
+            $inEdges = $this->formatInEdges($builder->getCompiler()->getServiceReferenceGraph()->getNode($options['id'])->getInEdges());
+            $output .= "\n".'- Usage: '.($inEdges ? implode(', ', $inEdges) : 'none');
+        }
 
         $this->write(isset($options['id']) ? sprintf("### %s\n\n%s\n", $options['id'], $output) : $output);
+    }
+
+    /**
+     * @param ServiceReferenceGraphEdge[] $inEdges
+     */
+    protected function formatInEdges(array $inEdges): array
+    {
+        return array_map(function (ServiceReferenceGraphEdge $edge) {
+            return $edge->getSourceNode()->getId();
+        }, $inEdges);
     }
 
     protected function describeContainerAlias(Alias $alias, array $options = [], ContainerBuilder $builder = null)

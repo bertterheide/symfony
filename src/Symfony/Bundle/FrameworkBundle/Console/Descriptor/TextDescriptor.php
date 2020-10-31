@@ -20,6 +20,7 @@ use Symfony\Component\DependencyInjection\Argument\IteratorArgument;
 use Symfony\Component\DependencyInjection\Argument\ServiceClosureArgument;
 use Symfony\Component\DependencyInjection\Argument\ServiceLocatorArgument;
 use Symfony\Component\DependencyInjection\Argument\TaggedIteratorArgument;
+use Symfony\Component\DependencyInjection\Compiler\ServiceReferenceGraphEdge;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBag;
@@ -149,7 +150,7 @@ class TextDescriptor extends Descriptor
         if ($service instanceof Alias) {
             $this->describeContainerAlias($service, $options, $builder);
         } elseif ($service instanceof Definition) {
-            $this->describeContainerDefinition($service, $options);
+            $this->describeContainerDefinition($service, $options, $builder);
         } else {
             $options['output']->title(sprintf('Information for Service "<info>%s</info>"', $options['id']));
             $options['output']->table(
@@ -250,7 +251,7 @@ class TextDescriptor extends Descriptor
         $options['output']->table($tableHeaders, $tableRows);
     }
 
-    protected function describeContainerDefinition(Definition $definition, array $options = [])
+    protected function describeContainerDefinition(Definition $definition, array $options = [], ContainerBuilder $builder = null)
     {
         if (isset($options['id'])) {
             $options['output']->title(sprintf('Information for Service "<info>%s</info>"', $options['id']));
@@ -355,10 +356,22 @@ class TextDescriptor extends Descriptor
             $tableRows[] = ['Arguments', implode("\n", $argumentsInformation)];
         }
 
-        $usages = $this->getUsagesForDefinition($definition);
-        $tableRows[] = ['Used by', \count($usages) > 0 ? implode(', ', $usages) : 'no'];
+        if (null !== $builder && isset($options['id'])) {
+            $inEdges = $this->formatInEdges($builder->getCompiler()->getServiceReferenceGraph()->getNode($options['id'])->getInEdges());
+            $tableRows[] = ['Usages', $inEdges ? implode(', ', $inEdges) : 'none'];
+        }
 
         $options['output']->table($tableHeaders, $tableRows);
+    }
+
+    /**
+     * @param ServiceReferenceGraphEdge[] $inEdges
+     */
+    protected function formatInEdges(array $inEdges): array
+    {
+        return array_map(function (ServiceReferenceGraphEdge $edge) {
+            return $edge->getSourceNode()->getId();
+        }, $inEdges);
     }
 
     protected function describeContainerDeprecations(ContainerBuilder $builder, array $options = []): void

@@ -16,6 +16,7 @@ use Symfony\Component\Console\Exception\RuntimeException;
 use Symfony\Component\DependencyInjection\Alias;
 use Symfony\Component\DependencyInjection\Argument\ArgumentInterface;
 use Symfony\Component\DependencyInjection\Argument\ServiceClosureArgument;
+use Symfony\Component\DependencyInjection\Compiler\ServiceReferenceGraphEdge;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBag;
@@ -114,7 +115,7 @@ class JsonDescriptor extends Descriptor
         $this->writeData($data, $options);
     }
 
-    protected function describeContainerDefinition(Definition $definition, array $options = [])
+    protected function describeContainerDefinition(Definition $definition, array $options = [], ContainerBuilder $builder = null)
     {
         $this->writeData($this->getContainerDefinitionData($definition, isset($options['omit_tags']) && $options['omit_tags'], isset($options['show_arguments']) && $options['show_arguments']), $options);
     }
@@ -208,7 +209,7 @@ class JsonDescriptor extends Descriptor
         return $data;
     }
 
-    private function getContainerDefinitionData(Definition $definition, bool $omitTags = false, bool $showArguments = false): array
+    private function getContainerDefinitionData(Definition $definition, bool $omitTags = false, bool $showArguments = false, ContainerBuilder $builder = null, string $id = null): array
     {
         $data = [
             'class' => (string) $definition->getClass(),
@@ -263,9 +264,21 @@ class JsonDescriptor extends Descriptor
             }
         }
 
-        $data['used_by'] = $this->getUsagesForDefinition($definition);
+        if (null !== $builder && null !== $id) {
+            $data['usage'] = $this->formatInEdges($builder->getCompiler()->getServiceReferenceGraph()->getNode($id)->getInEdges());
+        }
 
         return $data;
+    }
+
+    /**
+     * @param ServiceReferenceGraphEdge[] $inEdges
+     */
+    protected function formatInEdges(array $inEdges): array
+    {
+        return array_map(function (ServiceReferenceGraphEdge $edge) {
+            return $edge->getSourceNode()->getId();
+        }, $inEdges);
     }
 
     private function getContainerAliasData(Alias $alias): array
