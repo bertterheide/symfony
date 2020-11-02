@@ -92,6 +92,10 @@ abstract class Descriptor implements DescriptorInterface
             default:
                 throw new \InvalidArgumentException(sprintf('Object of type "%s" is not describable.', get_debug_type($object)));
         }
+
+        if ($object instanceof ContainerBuilder) {
+            $object->getCompiler()->getServiceReferenceGraph()->clear();
+        }
     }
 
     protected function getOutput(): OutputInterface
